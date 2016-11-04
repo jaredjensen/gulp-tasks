@@ -1,0 +1,12 @@
+@import "../../shared/scss/variables";
+
+.btn {
+    background-color: $color-primary;
+    color: #fff;
+    display: inline-block;
+    padding: 1rem 4rem;
+
+    &:hover {
+        background-color: fade-out($color-primary, 0.2);
+    }
+}
