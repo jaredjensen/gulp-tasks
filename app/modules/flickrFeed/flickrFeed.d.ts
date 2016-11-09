@@ -1,1 +1,1 @@
-declare const flickr: number;
+declare var app: any;

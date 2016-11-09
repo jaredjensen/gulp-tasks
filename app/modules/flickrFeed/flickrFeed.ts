@@ -1,1 +1,0 @@
-const flickr = 1;
