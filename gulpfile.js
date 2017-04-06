@@ -1,11 +1,11 @@
 var SASS_ALL = 'app/all.scss';
-//var JS_ALL = 'app/all.js';
-//var TS_PATTERN = 'app/modules/**/*.ts';
+var TS_SOURCE = ['app/**/*.ts', '!app/**/*.d.ts'];
+var JS_SOURCE = ['app/**/*.js', '!app/all.*'];
 
 var gulp = require('gulp');
 var browserSync = require('browser-sync').create();
 
-// Generates the Sass import file used to create all.css
+// Creates app/all.scss
 gulp.task('sass-gen', function () {
     var glob = require('glob');
     var imports = [
@@ -41,33 +41,28 @@ gulp.task('sass', ['sass-gen'], function () {
         .pipe(gulp.dest('app'));
 });
 
-// Lint all TypeScript
-gulp.task('tslint', function () {
+gulp.task('ts-lint', function () {
     var tslint = require('gulp-tslint');
-    return gulp.src('app/**/*.ts')
-        .pipe(tslint({
-            formatter: 'verbose'
-        }))
+    return gulp.src(TS_SOURCE)
+        .pipe(tslint({ formatter: 'verbose' }))
         .pipe(tslint.report());
 });
 
-// Process TypeScript
-gulp.task('typescript', function (cb) {
+gulp.task('ts-transpile', function () {
     var ts = require('gulp-typescript');
-    gulp.src(['app/**/*.ts', '!app/**/*.d.ts'], { base: '.' })
+    return gulp.src(TS_SOURCE, { base: '.' })
         .pipe(ts({ declaration: true }))
         .pipe(gulp.dest('.'));
 });
 
-// Process JavaScript
-gulp.task('javascript', function (cb) {
-    // Concat
+gulp.task('js-concat', function () {
     var concat = require('gulp-concat');
-    gulp.src(['app/**/*.js', '!app/all.*'])
+    return gulp.src(JS_SOURCE)
         .pipe(concat('all.js'))
-        .pipe(gulp.dest('app/'));
+        .pipe(gulp.dest('app'));
+});
 
-    // Minify
+gulp.task('js-uglify', ['js-concat'], function (cb) {
     var pump = require('pump');
     var rename = require('gulp-rename');
     var uglify = require('gulp-uglify');
@@ -82,8 +77,8 @@ gulp.task('javascript', function (cb) {
 // Create the watch, ensuring the browserSync and sass tasks are complete
 gulp.task('watch', ['browserSync', 'sass'], function () {
     gulp.watch(['app/**/*.scss', '!app/all.scss'], ['sass']);
-    gulp.watch('app/**/*.ts', ['tslint', 'typescript']);
-    gulp.watch(['app/**/*.js', '!app/all.*'], ['javascript']);
+    gulp.watch(TS_SOURCE, ['ts-lint', 'ts-transpile']);
+    gulp.watch(JS_SOURCE, ['js-uglify']);
     gulp.watch('*.html', browserSync.reload);
     gulp.watch('app/all.min.css', function () { browserSync.reload({ stream: true }) });
     gulp.watch('app/all.min.js', browserSync.reload); 
@@ -91,6 +86,6 @@ gulp.task('watch', ['browserSync', 'sass'], function () {
 
 gulp.task('browserSync', function() {
     browserSync.init({
-        server: { baseDir: '' }
+        server: { baseDir: './', index: 'index.html' }
     });
 });
