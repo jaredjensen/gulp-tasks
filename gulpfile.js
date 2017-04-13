@@ -79,9 +79,10 @@ gulp.task('watch', ['browserSync', 'sass'], function () {
     gulp.watch(['app/**/*.scss', '!app/all.scss'], ['sass']);
     gulp.watch(TS_SOURCE, ['ts-lint', 'ts-transpile']);
     gulp.watch(JS_SOURCE, ['js-uglify']);
-    gulp.watch('*.html', browserSync.reload);
-    gulp.watch('app/all.min.css', function () { browserSync.reload({ stream: true }) });
-    gulp.watch('app/all.min.js', browserSync.reload); 
+    gulp.watch(['app/all.min.js', '*.html'], browserSync.reload);
+    gulp.watch('app/all.min.css', function () {
+        gulp.src('app/all.min.css').pipe(browserSync.stream());
+    });
 });
 
 gulp.task('browserSync', function() {

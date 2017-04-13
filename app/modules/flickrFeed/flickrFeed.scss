@@ -1,0 +1,11 @@
+@import "../../shared/scss/mixins.scss";
+@import "../../shared/scss/variables.scss";
+
+.flickr-feed {
+    background: $color-light-gray;
+    border: 1px solid $color-primary;
+    @include border-radius(10px);
+    margin-bottom: 1rem;
+    padding: 1rem;
+    width: auto;
+}
