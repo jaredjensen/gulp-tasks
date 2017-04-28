@@ -1,0 +1,19 @@
+@import "icons-generated.scss";
+
+.icon {
+	background-repeat: no-repeat;
+	display: inline-block;
+	position: relative;
+}
+
+.icon-facebook {
+    @include sprite($icon-facebook);
+}
+
+.icon-pinterest {
+    @include sprite($icon-pinterest);
+}
+
+.icon-twitter {
+    @include sprite($icon-twitter);
+}
